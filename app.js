@@ -10,12 +10,13 @@ var users = require('./routes/users');
 var settings = require('./settings');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-
+var flash = require('connect-flash');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -23,11 +24,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-//app.use('/', routes);
-routes(app);
-app.use('/users', users);
 app.use(session({
     secret: settings.cookieSecret,
     key: settings.db,//cookie name
@@ -38,6 +34,13 @@ app.use(session({
         port: settings.port
     })
 }));
+app.use(flash());
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+//app.use('/', routes);
+routes(app);
+app.use('/users', users);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Page Lost');

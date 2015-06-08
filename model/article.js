@@ -219,6 +219,48 @@ Article.remove = function (name, day, title, callback) {
         });
     });
 };
-process.on('uncaughtException', function (err) {
-    console.log('Caught exception in article.js: ' + err);
-});
+
+//一次获取十篇文章
+Article.getTen = function (name, page, callback) {
+    //打开数据库
+    mongodb.open(function (err, db) {
+        if (err) {
+            return callback(err);
+        }
+        //读取 articles 集合
+        db.collection('articles', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);
+            }
+            var query = {};
+            if (name) {
+                query.name = name;
+            }
+            //使用 count 返回特定查询的文档数 total
+            collection.count(query, function (err, total) {
+                //根据 query 对象查询，并跳过前 (page-1)*10 个结果，返回之后的 10 个结果
+                collection.find(query, {
+                    skip: (page - 1) * 10,
+                    limit: 10
+                }).sort({
+                    time: -1
+                }).toArray(function (err, docs) {
+                    mongodb.close();
+                    if (err) {
+                        return callback(err);
+                    }
+                    //解析 markdown 为 html
+                    docs.forEach(function (doc) {
+                        try {
+                            doc.post = markdown.toHTML(doc.post);
+                        } catch (e) {
+                            console.log('Caught exception: ' + e);
+                        }
+                    });
+                    callback(null, docs, total);
+                });
+            });
+        });
+    });
+};

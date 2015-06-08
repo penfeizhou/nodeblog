@@ -4,14 +4,20 @@ var crypto = require('crypto'),
     Comment = require('../model/comment.js');
 module.exports = function (app) {
     app.get('/', function (req, res) {
-        Article.getAll(null, function (err, articles) {
+        //判断是否是第一页，并把请求的页数转换成 number 类型
+        var page = req.query.p ? parseInt(req.query.p) : 1;
+        //查询并返回第 page 页的 10 篇文章
+        Article.getTen(null, page, function (err, articles, total) {
             if (err) {
                 articles = [];
             }
             res.render('index', {
                 title: '主页',
-                user: req.session.user,
                 articles: articles,
+                page: page,
+                isFirstPage: (page - 1) == 0,
+                isLastPage: ((page - 1) * 10 + articles.length) == total,
+                user: req.session.user,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             });
@@ -154,14 +160,15 @@ module.exports = function (app) {
         res.redirect('/upload');
     });
     app.get('/u/:name', function (req, res) {
+        var page = req.query.p ? parseInt(req.query.p) : 1;
         //检查用户是否存在
         User.get(req.params.name, function (err, user) {
             if (!user) {
                 req.flash('error', '用户不存在!');
-                return res.redirect('/');//用户不存在则跳转到主页
+                return res.redirect('/');
             }
-            //查询并返回该用户的所有文章
-            Article.getAll(user.name, function (err, articles) {
+            //查询并返回该用户第 page 页的 10 篇文章
+            Article.getTen(user.name, page, function (err, articles, total) {
                 if (err) {
                     req.flash('error', err);
                     return res.redirect('/');
@@ -169,6 +176,9 @@ module.exports = function (app) {
                 res.render('user', {
                     title: user.name,
                     articles: articles,
+                    page: page,
+                    isFirstPage: (page - 1) == 0,
+                    isLastPage: ((page - 1) * 10 + articles.length) == total,
                     user: req.session.user,
                     success: req.flash('success').toString(),
                     error: req.flash('error').toString()

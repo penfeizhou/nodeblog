@@ -114,7 +114,8 @@ module.exports = function (app) {
     app.post('/post', checkLogin);
     app.post('/post', function (req, res) {
         var currentUser = req.session.user,
-            article = new Article(currentUser.name, req.body.title, req.body.content);
+            tags = [req.body.tag1, req.body.tag2, req.body.tag3],
+            article = new Article(currentUser.name, req.body.title, tags, req.body.post);
         article.save(function (err) {
             if (err) {
                 req.flash('error', err);
@@ -271,6 +272,36 @@ module.exports = function (app) {
             }
             res.render('archive', {
                 title: '存档',
+                articles: articles,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+    app.get('/tags', function (req, res) {
+        Article.getTags(function (err, tags) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('tags', {
+                title: '标签',
+                tags: tags,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+    app.get('/tags/:tag', function (req, res) {
+        Article.getTag(req.params.tag, function (err, articles) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('tag', {
+                title: 'TAG:' + req.params.tag,
                 articles: articles,
                 user: req.session.user,
                 success: req.flash('success').toString(),

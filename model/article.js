@@ -1,8 +1,9 @@
 var mongodb = require('./db'),
     markdown = require('markdown').markdown;
-function Article(name, title, content) {
+function Article(name, title, tags, content) {
     this.name = name;
     this.title = title;
+    this.tags = tags;
     this.content = content;
 }
 
@@ -26,6 +27,7 @@ Article.prototype.save = function (callback) {
         time: time,
         title: this.title,
         content: this.content,
+        tags: this.tags,
         comments: []
     };
     //打开数据库
@@ -280,6 +282,59 @@ Article.getArchive = function (callback) {
             }
             //返回只包含 name、time、title 属性的文档组成的存档数组
             collection.find({}, {
+                "name": 1,
+                "time": 1,
+                "title": 1
+            }).sort({
+                time: -1
+            }).toArray(function (err, docs) {
+                mongodb.close();
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, docs);
+            });
+        });
+    });
+};
+//返回所有标签
+Article.getTags = function (callback) {
+    mongodb.open(function (err, db) {
+        if (err) {
+            return callback(err);
+        }
+        db.collection('articles', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);
+            }
+            //distinct 用来找出给定键的所有不同值
+            collection.distinct("tags", function (err, docs) {
+                mongodb.close();
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, docs);
+            });
+        });
+    });
+};
+//返回含有特定标签的所有文章
+Article.getTag = function (tag, callback) {
+    mongodb.open(function (err, db) {
+        if (err) {
+            return callback(err);
+        }
+        db.collection('articles', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);
+            }
+            //查询所有 tags 数组内包含 tag 的文档
+            //并返回只含有 name、time、title 组成的数组
+            collection.find({
+                "tags": tag
+            }, {
                 "name": 1,
                 "time": 1,
                 "title": 1

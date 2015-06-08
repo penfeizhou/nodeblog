@@ -15,6 +15,8 @@
     "mongodb": "1.4.28",
     "express-session": "1.9.1",
     "connect-flash": "0.1.1",
-    "connect-mongo": "0.8.0"
+    "connect-mongo": "0.8.0",
+    "multer": "0.1.8",
+    "markdown": "0.5.0"
   }
 }

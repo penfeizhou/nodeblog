@@ -1,5 +1,5 @@
-var mongodb = require('./db');
-
+var mongodb = require('./db'),
+    markdown = require('markdown').markdown;
 function Post(name, title, post) {
     this.name = name;
     this.title = title;
@@ -53,7 +53,7 @@ Post.prototype.save = function (callback) {
 };
 
 //读取文章及其相关信息
-Post.get = function (name, callback) {
+Post.getAll = function (name, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
@@ -77,8 +77,20 @@ Post.get = function (name, callback) {
                 if (err) {
                     return callback(err);//失败！返回 err
                 }
+                //解析 markdown 为 html
+                docs.forEach(function (doc) {
+                    try {
+                        doc.post = markdown.toHTML(doc.post);
+                    } catch (e) {
+                        console.log('Caught exception: ' + e);
+                    }
+                });
                 callback(null, docs);//成功！以数组形式返回查询的结果
             });
         });
     });
 };
+
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ' + err);
+});

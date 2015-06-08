@@ -263,4 +263,19 @@ module.exports = function (app) {
             res.redirect('/');
         });
     });
+    app.get('/archive', function (req, res) {
+        Article.getArchive(function (err, articles) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('archive', {
+                title: '存档',
+                articles: articles,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
 };

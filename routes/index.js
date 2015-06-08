@@ -1,16 +1,17 @@
 var crypto = require('crypto'),
     User = require('../model/user.js'),
-    Post = require('../model/post.js');
+    Article = require('../model/article.js'),
+    Comment = require('../model/comment.js');
 module.exports = function (app) {
     app.get('/', function (req, res) {
-        Post.getAll(null, function (err, posts) {
+        Article.getAll(null, function (err, articles) {
             if (err) {
-                posts = [];
+                articles = [];
             }
             res.render('index', {
                 title: '主页',
                 user: req.session.user,
-                posts: posts,
+                articles: articles,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             });
@@ -107,8 +108,8 @@ module.exports = function (app) {
     app.post('/post', checkLogin);
     app.post('/post', function (req, res) {
         var currentUser = req.session.user,
-            post = new Post(currentUser.name, req.body.title, req.body.post);
-        post.save(function (err) {
+            article = new Article(currentUser.name, req.body.title, req.body.content);
+        article.save(function (err) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
@@ -160,14 +161,14 @@ module.exports = function (app) {
                 return res.redirect('/');//用户不存在则跳转到主页
             }
             //查询并返回该用户的所有文章
-            Post.getAll(user.name, function (err, posts) {
+            Article.getAll(user.name, function (err, articles) {
                 if (err) {
                     req.flash('error', err);
                     return res.redirect('/');
                 }
                 res.render('user', {
                     title: user.name,
-                    posts: posts,
+                    articles: articles,
                     user: req.session.user,
                     success: req.flash('success').toString(),
                     error: req.flash('error').toString()
@@ -176,31 +177,51 @@ module.exports = function (app) {
         });
     });
     app.get('/u/:name/:day/:title', function (req, res) {
-        Post.getOne(req.params.name, req.params.day, req.params.title, function (err, post) {
+        Article.getOne(req.params.name, req.params.day, req.params.title, function (err, article) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
             res.render('article', {
                 title: req.params.title,
-                post: post,
+                article: article,
                 user: req.session.user,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             });
         });
     });
+    app.post('/u/:name/:day/:title', function (req, res) {
+        Article.getOne(req.params.name, req.params.day, req.params.title, function (err, article) {
+            if (err) {
+                req.flash('error', err);
+            }
+            var date = new Date(),
+                time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
+                    date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+            var newComment = new Comment(req.body.cname, req.body.cemail, time, req.body.cwebsite, req.body.content);
+            newComment.save(function (err) {
+                if (err) {
+                    req.flash('error', err);
+                    return res.redirect('back');
+                }
+                req.flash('success', '留言成功!');
+                res.redirect('back');
+            }, article);
+        });
+
+    });
     app.get('/edit/:name/:day/:title', checkLogin);
     app.get('/edit/:name/:day/:title', function (req, res) {
         var currentUser = req.session.user;
-        Post.edit(currentUser.name, req.params.day, req.params.title, function (err, post) {
+        Article.edit(currentUser.name, req.params.day, req.params.title, function (err, article) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('back');
             }
             res.render('edit', {
                 title: '编辑',
-                post: post,
+                article: article,
                 user: req.session.user,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
@@ -210,7 +231,7 @@ module.exports = function (app) {
     app.post('/edit/:name/:day/:title', checkLogin);
     app.post('/edit/:name/:day/:title', function (req, res) {
         var currentUser = req.session.user;
-        Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function (err) {
+        Article.update(currentUser.name, req.params.day, req.params.title, req.body.content, function (err) {
             var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
             if (err) {
                 req.flash('error', err);
@@ -223,7 +244,7 @@ module.exports = function (app) {
     app.get('/remove/:name/:day/:title', checkLogin);
     app.get('/remove/:name/:day/:title', function (req, res) {
         var currentUser = req.session.user;
-        Post.remove(currentUser.name, req.params.day, req.params.title, function (err) {
+        Article.remove(currentUser.name, req.params.day, req.params.title, function (err) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('back');

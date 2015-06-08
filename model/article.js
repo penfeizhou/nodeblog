@@ -1,15 +1,15 @@
 var mongodb = require('./db'),
     markdown = require('markdown').markdown;
-function Post(name, title, post) {
+function Article(name, title, content) {
     this.name = name;
     this.title = title;
-    this.post = post;
+    this.content = content;
 }
 
-module.exports = Post;
+module.exports = Article;
 
 //存储一篇文章及其相关信息
-Post.prototype.save = function (callback) {
+Article.prototype.save = function (callback) {
     var date = new Date();
     //存储各种时间格式，方便以后扩展
     var time = {
@@ -25,7 +25,8 @@ Post.prototype.save = function (callback) {
         name: this.name,
         time: time,
         title: this.title,
-        post: this.post
+        content: this.content,
+        comments: []
     };
     //打开数据库
     mongodb.open(function (err, db) {
@@ -33,7 +34,7 @@ Post.prototype.save = function (callback) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -53,14 +54,14 @@ Post.prototype.save = function (callback) {
 };
 
 //读取文章及其相关信息
-Post.getAll = function (name, callback) {
+Article.getAll = function (name, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -80,7 +81,7 @@ Post.getAll = function (name, callback) {
                 //解析 markdown 为 html
                 docs.forEach(function (doc) {
                     try {
-                        doc.post = markdown.toHTML(doc.post);
+                        doc.content = markdown.toHTML(doc.content);
                     } catch (e) {
                         console.log('Caught exception: ' + e);
                     }
@@ -91,14 +92,14 @@ Post.getAll = function (name, callback) {
     });
 };
 //获取一篇文章
-Post.getOne = function (name, day, title, callback) {
+Article.getOne = function (name, day, title, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -113,11 +114,16 @@ Post.getOne = function (name, day, title, callback) {
                 if (err) {
                     return callback(err);
                 }
-                //解析 markdown 为 html
-                try {
-                    doc.post = markdown.toHTML(doc.post);
-                } catch (e) {
-                    console.log('Caught exception: ' + e);
+                if (doc) {
+                    //解析 markdown 为 html
+                    try {
+                        doc.content = markdown.toHTML(doc.content);
+                        doc.comments.forEach(function (comment) {
+                            comment.content = markdown.toHTML(comment.content);
+                        });
+                    } catch (e) {
+                        console.log('Caught exception: ' + e);
+                    }
                 }
                 callback(null, doc);//返回查询的一篇文章
             });
@@ -125,14 +131,14 @@ Post.getOne = function (name, day, title, callback) {
     });
 };
 //返回原始发表的内容（markdown 格式）
-Post.edit = function (name, day, title, callback) {
+Article.edit = function (name, day, title, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -154,14 +160,14 @@ Post.edit = function (name, day, title, callback) {
 };
 
 //更新一篇文章及其相关信息
-Post.update = function (name, day, title, post, callback) {
+Article.update = function (name, day, title, post, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -172,7 +178,7 @@ Post.update = function (name, day, title, post, callback) {
                 "time.day": day,
                 "title": title
             }, {
-                $set: {post: post}
+                $set: {content: post}
             }, function (err) {
                 mongodb.close();
                 if (err) {
@@ -184,14 +190,14 @@ Post.update = function (name, day, title, post, callback) {
     });
 };
 //删除一篇文章
-Post.remove = function (name, day, title, callback) {
+Article.remove = function (name, day, title, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
             return callback(err);
         }
         //读取 posts 集合
-        db.collection('posts', function (err, collection) {
+        db.collection('articles', function (err, collection) {
             if (err) {
                 mongodb.close();
                 return callback(err);
@@ -214,5 +220,5 @@ Post.remove = function (name, day, title, callback) {
     });
 };
 process.on('uncaughtException', function (err) {
-    console.log('Caught exception in post.js: ' + err);
+    console.log('Caught exception in article.js: ' + err);
 });

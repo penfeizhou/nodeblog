@@ -17,6 +17,8 @@
     "connect-flash": "0.1.1",
     "connect-mongo": "0.8.0",
     "multer": "0.1.8",
-    "markdown": "0.5.0"
+    "markdown": "0.5.0",
+    "bootstrap": "3.3.4",
+    "debug": "2.2.0"
   }
 }

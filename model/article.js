@@ -28,7 +28,8 @@ Article.prototype.save = function (callback) {
         title: this.title,
         content: this.content,
         tags: this.tags,
-        comments: []
+        comments: [],
+        pv: 0
     };
     //打开数据库
     mongodb.open(function (err, db) {
@@ -112,11 +113,24 @@ Article.getOne = function (name, day, title, callback) {
                 "time.day": day,
                 "title": title
             }, function (err, doc) {
-                mongodb.close();
                 if (err) {
+                    mongodb.close();
                     return callback(err);
                 }
                 if (doc) {
+                    //每访问 1 次，pv 值增加 1
+                    collection.update({
+                        "name": name,
+                        "time.day": day,
+                        "title": title
+                    }, {
+                        $inc: {"pv": 1}
+                    }, function (err) {
+                        mongodb.close();
+                        if (err) {
+                            console.log('Caught exception: ' + err);
+                        }
+                    });
                     //解析 markdown 为 html
                     try {
                         doc.content = markdown.toHTML(doc.content);
@@ -127,6 +141,7 @@ Article.getOne = function (name, day, title, callback) {
                         console.log('Caught exception: ' + e);
                     }
                 }
+                mongodb.close();
                 callback(null, doc);//返回查询的一篇文章
             });
         });

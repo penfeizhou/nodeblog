@@ -3,6 +3,11 @@ body {
     padding-bottom: 20px;
 }
 
-.navbar {
-    margin-bottom: 20px;
+p.info {
+    color: darkgreen;
+    font-size: 0.7em;
+}
+
+div.content {
+    background: white;
 }

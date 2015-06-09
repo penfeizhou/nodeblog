@@ -1,19 +1,31 @@
 <%- include header %>
-<% articles.forEach(function (article, index) { %>
-<p><h2><a href="u/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"><%= article.title %></a></h2></p>
-<p class="info">
-    作者：<a href="u/<%= article.name %>"><%= article.name %></a> |
-    日期：<%= article.time.minute %>|
-    标签：
-    <% if(article.tags){ %>
-    <% article.tags.forEach(function (tag, index) { %>
-    <% if (tag) { %>
-    <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
-    <% } %>
+<ul class="list-group">
+    <% articles.forEach(function (article, index) { %>
+    <li>
+        <h3><a href="u/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"><%= article.title %></a></h3>
+
+        <p class="info">
+            作者：<a href="u/<%= article.name %>"><%= article.name %></a> |
+            日期：<%= article.time.minute %>|
+            标签：
+            <% if(article.tags){ %>
+            <% article.tags.forEach(function (tag, index) { %>
+            <% if (tag) { %>
+            <a class="label label-primary" href="/tags/<%= tag %>"><%= tag %></a>
+            <% } %>
+            <% }) %>
+            <% } %>
+        </p>
+
+        <div class="content">
+            <p><%- article.content %></p>
+        </div>
+
+        <p class="info">
+            阅读：<%= article.pv %> | 评论：<%= article.comments.length %>
+        </p>
+    </li>
     <% }) %>
-    <% } %>
-</p>
-<p><%- article.content %></p>
-<% }) %>
+</ul>
 <%- include page %>
 <%- include footer %>

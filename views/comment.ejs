@@ -5,11 +5,7 @@
 <p><%- comment.content %></p>
 <% }) %>
 <form method="post">
-    <% if (user) { %>
-    姓名：<input type="text" name="cname" value="<%= user.name %>"/><br/>
-    邮箱：<input type="text" name="cemail" value="<%= user.email %>"/><br/>
-    网址：<input type="text" name="cwebsite" value="/u/<%= user.name %>"/><br/>
-    <% } else { %>
+    <% if (!user) { %>
     姓名：<input type="text" name="cname"/><br/>
     邮箱：<input type="text" name="cemail"/><br/>
     网址：<input type="text" name="cwebsite" value="http://"/><br/>

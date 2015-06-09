@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>我的博客</title>
+    <title><%= title %></title>
 
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +21,7 @@
 <body>
 <div class="container">
     <!-- Static navbar -->
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -32,8 +32,8 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand" href="#">
-                    <%= title %>
+                <a class="navbar-brand" href="/">
+                    我的博客
                 </a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
@@ -57,8 +57,8 @@
 
         <article>
             <% if (success) { %>
-            <div><%= success %></div>
+            <div class="alert alert-success" role="alert"><%= success %></div>
             <% } %>
             <% if (error) { %>
-            <div><%= error %> </div>
+            <div class="alert alert-danger" role="alert"><%= error %> </div>
             <% } %>

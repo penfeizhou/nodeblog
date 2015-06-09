@@ -113,9 +113,17 @@ module.exports = function (app) {
     });
     app.post('/post', checkLogin);
     app.post('/post', function (req, res) {
+        if (!req.body.title) {
+            req.flash('error', '标题不能为空');
+            return res.redirect('/post');
+        }
+        if (!req.body.content) {
+            req.flash('error', '内容不能为空');
+            return res.redirect('/post');
+        }
         var currentUser = req.session.user,
             tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            article = new Article(currentUser.name, req.body.title, tags, req.body.post);
+            article = new Article(currentUser.name, req.body.title, tags, req.body.content);
         article.save(function (err) {
             if (err) {
                 req.flash('error', err);

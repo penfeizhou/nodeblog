@@ -6,12 +6,30 @@
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    (function () {
+    $(function () {
         var element = document.getElementById(window.location.pathname);
         if (element) {
             element.className = "active";
         }
-    })();
+    });
+    function validate() {
+        var validated = true;
+        $(".check").each(function () {
+            if (!$(this).value) {
+                alert($(this).attr('name') + '不能为空');
+                validated = false;
+                return false;
+            }
+        });
+        return validated;
+    }
+    $(function () {
+        $('.check').each(function () {
+            var required = $("<strong style='color: red'>*</strong>"); //创建元素
+            $(required).insertBefore($(this));
+        });
+        $('form').attr('onsubmit', 'return validate()');
+    });
 </script>
 </body>
 </html>

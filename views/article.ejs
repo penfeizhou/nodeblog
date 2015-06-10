@@ -2,7 +2,7 @@
 <div class="page-header">
     <h2><%= title %></h2>
 </div>
-<p class="info">
+<div class="info">
     作者：<a href="/u/<%= article.name %>"><%= article.name %></a> |
     日期：<%= article.time.minute %>|
     标签：
@@ -13,7 +13,7 @@
     <% } %>
     <% }) %>
     <% } %>
-</p>
+</div>
 <div class="content">
     <p><%- article.content %></p>
 </div>
@@ -22,8 +22,8 @@
 <a class="btn btn-default" href="/remove/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"
    role="button">删除</a>
 <% } %>
-<p class="info">
+<div class="info">
     阅读：<%= article.pv %> | 评论：<%= article.comments.length %>
-</p>
+</div>
 <%- include comment %>
 <%- include footer %>

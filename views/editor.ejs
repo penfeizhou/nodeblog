@@ -1,0 +1,17 @@
+<form method="post">
+    <div class="form-group">
+        标题：<br/>
+        <input class="check" type="text" name="title" value="<%= article.title %>"/>
+    </div>
+    <div class="form-group">
+        标签：<br/>
+        <input type="text" name="tag1" value="<%= article.tags[0] %>"/>
+        <input type="text" name="tag2" value="<%= article.tags[1] %>"/>
+        <input type="text" name="tag3" value="<%= article.tags[2] %>"/>
+    </div>
+    <div class="form-group">
+        正文：<br/>
+        <textarea class="check" name="content" rows="20" cols="100"><%= article.content %></textarea>
+    </div>
+    <button type="submit" class="btn btn-default">保存修改</button>
+</form>

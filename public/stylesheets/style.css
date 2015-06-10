@@ -3,9 +3,9 @@ body {
     padding-bottom: 20px;
 }
 
-p.info {
+div.info {
     color: darkgreen;
-    font-size: 0.7em;
+    font-size: 1em;
 }
 
 div.content {

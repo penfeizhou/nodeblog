@@ -1,10 +1,16 @@
 <br/>
-<% article.comments.forEach(function (comment, index) { %>
-<p><a href="<%= comment.website %>"><%= comment.name %></a>
-    <span class="info"> 回复于 <%= comment.time %></span></p>
-<p><%- comment.content %></p>
-<% }) %>
+<ul class="list-group">
+    <% article.comments.forEach(function (comment, index) { %>
+    <li>
+        <div class="info"><a href="<%= comment.website %>"><%= comment.name %></a>
+            <span class="info"> 回复于 <%= comment.time %></span></div>
+
+        <p><%- comment.content %></p>
+    </li>
+    <% }) %>
+</ul>
 <form method="post">
+    <p>留言：</p>
     <% if (!user) { %>
     姓名：<input type="text" name="cname"/><br/>
     邮箱：<input type="text" name="cemail"/><br/>

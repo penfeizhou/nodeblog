@@ -32,9 +32,15 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a class="navbar-brand" href="/">
-                    我的博客
+                <% if(user){ %>
+                <a class="navbar-brand" href="u/<%= user.name %>">
+                    <%= user.name %>的博客
                 </a>
+                <% } else { %>
+                <a class="navbar-brand" href="/">
+                    博客
+                </a>
+                <% } %>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -47,14 +53,34 @@
                     <li id="/logout"><a href="/logout">登出</a></li>
                     <% } else { %>
                     <li id="/login"><a href="/login">登录</a></li>
-                    <li id="/reg"><a href="/reg">注册</a></li>
                     <% } %>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="jumbotron">
-
+        <script type="text/javascript">
+            function typeAlert(str) {
+                if ($('.alert-success').length > 0) {
+                    $('.alert-success').remove();
+                }
+                if ($('.alert-danger').length > 0) {
+                    $('.alert-danger')[0].innerText = str;
+                } else {
+                    $("<div class='alert alert-danger' role='alert'>" + str + "</div>").insertBefore($('article'));
+                }
+            }
+            function typeSucess(str) {
+                if ($('.alert-danger').length > 0) {
+                    $('.alert-danger').remove();
+                }
+                if ($('.alert-success').length > 0) {
+                    $('.alert-success')[0].innerText = str;
+                } else {
+                    $("<div class='alert alert-success' role='alert'>" + str + "</div>").insertBefore($('article'));
+                }
+            }
+        </script>
         <article>
             <% if (success) { %>
             <div class="alert alert-success" role="alert"><%= success %></div>

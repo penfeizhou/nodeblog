@@ -1,9 +1,75 @@
 <%- include header %>
-<form method="post">
-    用户名： <input type="text" name="name"/><br/>
-    密码： <input type="password" name="password"/><br/>
-    确认密码：<input type="password" name="password-repeat"/><br/>
-    邮箱： <input type="email" name="email"/><br/>
-    <input type="submit" value="注册"/>
-</form>
+<div class="row">
+    <div class="col-lg-4 col-lg-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title" style="text-align: left">注册</div>
+                <div class="panel-body" style="padding: 20px">
+                    <form action="/reg" class="form-horizontal" role="form" method="post">
+                        <div class="form-group">
+                            用户名：<input id="name" type="text" class="form-control" name="name">
+                        </div>
+                        <div class="form-group">
+                            密码：<input id="password" type="password" class="form-control" name="password"
+                                      autocomplete="off">
+                            确认密码：<input id="repeatpassword" type="password" class="form-control" name="password"
+                                        autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            邮箱： <input id="email" type="email" class="form-control" name="email"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="button" class="btn btn-success btn-block" value="注 册" onclick="reg();"
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function reg() {
+        var username = $('#name').val(), password = $('#password').val(), repeatPassword = $('#repeatpassword').val(),
+                email = $('#email').val;
+        if (!username) {
+            typeAlert('用户名不能为空');
+            return;
+        }
+        if (!password) {
+            typeAlert('密码不能为空');
+            return;
+        }
+        if (!password == repeatPassword) {
+            typeAlert('密码不一致');
+            return;
+        }
+        if (!email) {
+            typeAlert('邮箱不能为空');
+            return;
+        }
+        var data = {"name": username, "password": $.md5(password), "email": email};
+        $.ajax({
+            url: '/reg',
+            type: 'POST',
+            data: data,
+            success: function (data, status) {
+                if (data.sucess) {
+                    typeSucess(data.sucess + ',请登录');
+                    setTimeout(function () {
+                        location.href = '/login';
+                    }, 1000);
+                }
+                if (data.error) {
+                    typeAlert(data.error);
+                }
+            },
+            error: function (data, status) {
+                if (status == "error") {
+                    typeAlert('注册失败');
+                }
+            }
+        });
+    }
+</script>
 <%- include footer %>

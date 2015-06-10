@@ -16,7 +16,7 @@
     function validate() {
         var validated = true;
         $(".check").each(function () {
-            if (!$(this).value) {
+            if (!$(this).val()) {
                 alert($(this).attr('name') + '不能为空');
                 validated = false;
                 return false;

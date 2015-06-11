@@ -101,23 +101,17 @@ module.exports = function (app) {
     app.post('/post', checkLogin);
     app.post('/post', function (req, res) {
         if (!req.body.title) {
-            req.flash('error', '标题不能为空');
-            return res.redirect('/post');
+            return res.json({error: '标题不能为空'});
         }
         if (!req.body.content) {
-            req.flash('error', '内容不能为空');
-            return res.redirect('/post');
+            return res.json({error: '内容不能为空'});
         }
-        var currentUser = req.session.user,
-            tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-            article = new Article(currentUser.name, req.body.title, tags, req.body.content);
+        var article = new Article(req.session.user.name, req.body.title, req.body.tags, req.body.content);
         article.save(function (err) {
             if (err) {
-                req.flash('error', err);
-                return res.redirect('/');
+                return res.json({error: '保存失败'});
             }
-            req.flash('success', '发布成功!');
-            res.redirect('/');//发表成功跳转到主页
+            return res.json({sucess: '发布成功', name: req.session.user.name});
         });
     });
     app.get('/logout', function (req, res) {
@@ -246,14 +240,17 @@ module.exports = function (app) {
     app.post('/edit/:name/:day/:title', checkLogin);
     app.post('/edit/:name/:day/:title', function (req, res) {
         var currentUser = req.session.user;
-        Article.update(currentUser.name, req.params.day, req.params.title, req.body.content, function (err) {
-            var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+        if (!req.body.title) {
+            return res.json({error: '标题不能为空'});
+        }
+        if (!req.body.content) {
+            return res.json({error: '内容不能为空'});
+        }
+        Article.update(currentUser.name, req.params.day, req.params.title, req.body.title, req.body.tags, req.body.content, function (err) {
             if (err) {
-                req.flash('error', err);
-                return res.redirect(url);//出错！返回文章页
+                return res.json({error: '保存失败'});
             }
-            req.flash('success', '修改成功!');
-            res.redirect(url);//成功！返回文章页
+            return res.json({sucess: '发布成功', name: req.session.user.name});
         });
     });
     app.get('/remove/:name/:day/:title', checkLogin);

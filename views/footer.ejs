@@ -13,24 +13,6 @@
             element.className = "active";
         }
     });
-    function validate() {
-        var validated = true;
-        $(".check").each(function () {
-            if (!$(this).val()) {
-                alert($(this).attr('name') + '不能为空');
-                validated = false;
-                return false;
-            }
-        });
-        return validated;
-    }
-    $(function () {
-        $('.check').each(function () {
-            var required = $("<strong style='color: red'>*</strong>"); //创建元素
-            $(required).insertBefore($(this));
-        });
-        $('form').attr('onsubmit', 'return validate()');
-    });
 </script>
 </body>
 </html>

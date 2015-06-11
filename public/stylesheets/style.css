@@ -11,3 +11,7 @@ div.info {
 div.content {
     background: white;
 }
+
+a.tag {
+    margin-left: 10px;
+}

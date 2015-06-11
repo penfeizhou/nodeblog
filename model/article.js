@@ -177,7 +177,7 @@ Article.edit = function (name, day, title, callback) {
 };
 
 //更新一篇文章及其相关信息
-Article.update = function (name, day, title, post, callback) {
+Article.update = function (name, day, title, newTitle, tags, post, callback) {
     //打开数据库
     mongodb.open(function (err, db) {
         if (err) {
@@ -193,9 +193,9 @@ Article.update = function (name, day, title, post, callback) {
             collection.update({
                 "name": name,
                 "time.day": day,
-                "title": title
+                "title": title,
             }, {
-                $set: {content: post}
+                $set: {content: post, tags: tags, title: newTitle}
             }, function (err) {
                 mongodb.close();
                 if (err) {

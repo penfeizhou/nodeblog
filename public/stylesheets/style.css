@@ -49,5 +49,6 @@ a.title:hover,
 a.title:focus,
 a.title.focus {
     color: greenyellow;
+    background: gray;
     text-decoration: none;
 }

@@ -3,12 +3,15 @@
         标题：<br/>
         <input id="title" type="text" value="<%= article.title %>"/>
     </div>
-    <div class="form-group">
+    <div class="form-group" style="overflow: visible;">
         标签：
         <% if(article.tags){ %>
         <% article.tags.forEach(function (tag) { %>
         <% if (tag) { %>
-        <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+        <div style="display:inline-block" onmouseout="tagout(this)" onmouseover="tagover(this)">
+            <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
+            <button type="button" class="btn btn-default" onclick="deleteTag(this);" style="display: none">删除</button>
+        </div>
         <% } %>
         <% }) %>
         <% } %>
@@ -77,13 +80,24 @@
                 var newTag = $('#edittag').val();
                 var tagE = document.createElement("a");
                 tagE.setAttribute('class', 'label label-primary tag');
-                tagE.setAttribute('href', '/tag/' + newTag);
                 tagE.innerText = newTag;
-                $(tagE).insertBefore('#aftertaglabel');
+                var div = $('<div style="display:inline-block" onmouseout="tagout(this)" onmouseover="tagover(this)"/>');
+                div.append(tagE);
+                div.append($(' <button type="button" class="btn btn-default" onclick="deleteTag(this);" style="display: none">删除</button>'))
+                $(div).insertBefore('#aftertaglabel');
                 $('#edittag').remove();
             }
         } else {
             $('<input id="edittag" type="text" class="tag"/>').insertAfter($('#addtag'));
         }
+    }
+    function tagover(div) {
+        $(div).children('button').show();
+    }
+    function tagout(div) {
+        $(div).children('button').hide();
+    }
+    function deleteTag(btn) {
+        $(btn).parent().remove();
     }
 </script>

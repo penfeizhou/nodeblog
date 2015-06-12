@@ -30,3 +30,4 @@ local.*
 journal
 blog.*
 public/images
+settings.js

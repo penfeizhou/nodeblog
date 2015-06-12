@@ -8,7 +8,7 @@
         <% if(article.tags){ %>
         <% article.tags.forEach(function (tag) { %>
         <% if (tag) { %>
-        <a class="label label-primary tag" href="/tags/<%= tag %>"><%= tag %></a>
+        <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
         <% } %>
         <% }) %>
         <% } %>

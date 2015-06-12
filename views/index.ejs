@@ -2,7 +2,7 @@
 <ul class="list-group">
     <% articles.forEach(function (article, index) { %>
     <li>
-        <h3><a class="modal-title"
+        <h3><a class="title"
                href="u/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"><%= article.title %></a></h3>
 
         <div class="info">
@@ -12,7 +12,7 @@
             <% if(article.tags){ %>
             <% article.tags.forEach(function (tag, index) { %>
             <% if (tag) { %>
-            <a class="label label-primary" href="/tags/<%= tag %>"><%= tag %></a>
+            <a class="tag" href="/tags/<%= tag %>"><%= tag %></a>
             <% } %>
             <% }) %>
             <% } %>

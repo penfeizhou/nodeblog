@@ -3,7 +3,8 @@
 
     <% articles.forEach(function (article, index) { %>
     <li>
-        <h2><a href="/u/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"><%= article.title %></a>
+        <h2><a class="title"
+               href="/u/<%= article.name %>/<%= article.time.day %>/<%= article.title %>"><%= article.title %></a>
         </h2>
 
         <div class="info">

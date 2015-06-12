@@ -39,7 +39,9 @@ app.use(session({
     store: new MongoStore({
         db: settings.db,
         host: settings.host,
-        port: settings.port
+        port: settings.port,
+        username: settings.username,
+        password: settings.password
     })
 }));
 app.use(flash());

@@ -21,7 +21,7 @@ Comment.prototype.save = function (callback, article) {
         //读取 posts 集合
         db.collection('articles', function (err, collection) {
             if (err) {
-                mongodb.close();
+                db.close();
                 return callback(err);
             }
             //通过用户名、时间及标题查找文档，并把一条留言对象添加到该文档的 comments 数组里
@@ -40,7 +40,7 @@ Comment.prototype.save = function (callback, article) {
                     }
                 }
             }, function (err) {
-                mongodb.close();
+                db.close();
                 if (err) {
                     return callback(err);
                 }
